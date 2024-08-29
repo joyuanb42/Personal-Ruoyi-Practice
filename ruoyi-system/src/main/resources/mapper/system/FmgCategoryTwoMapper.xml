@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.FmgCategoryTwoMapper">
+    
+    <resultMap type="FmgCategoryTwo" id="FmgCategoryTwoResult">
+        <result property="ctwoId"    column="ctwo_id"    />
+        <result property="coneId"    column="cone_id"    />
+        <result property="ctwoName"    column="ctwo_name"    />
+        <result property="ctwoNum"    column="ctwo_num"    />
+        <result property="ctwoCode"    column="ctwo_code"    />
+        <result property="ctwoInfo"    column="ctwo_info"    />
+        <result property="coneName"    column="cone_name"    />
+    </resultMap>
+
+    <sql id="selectFmgCategoryTwoVo">
+        select ctwo_id, cone_id, ctwo_name, ctwo_num, ctwo_code, ctwo_info, cone_name from fmg_category_two
+    </sql>
+
+    <select id="selectFmgCategoryTwoList" parameterType="FmgCategoryTwo" resultMap="FmgCategoryTwoResult">
+        select ctwo_id, ct.cone_id, ctwo_name, ctwo_num, ctwo_code, ctwo_info
+        ,co.cone_name
+        from fmg_category_two ct left join fmg_category_one co on ct.cone_id = co.cone_id
+        <where>  
+            <if test="ctwoName != null  and ctwoName != ''"> and ctwo_name like concat('%', #{ctwoName}, '%')</if>
+            <if test="ctwoCode != null  and ctwoCode != ''"> and ctwo_code = #{ctwoCode}</if>
+        </where>
+    </select>
+    
+    <select id="selectFmgCategoryTwoByCtwoId" parameterType="Long" resultMap="FmgCategoryTwoResult">
+        <include refid="selectFmgCategoryTwoVo"/>
+        where ctwo_id = #{ctwoId}
+    </select>
+
+    <select id="selectListAll" resultMap="FmgCategoryTwoResult">
+        <include refid="selectFmgCategoryTwoVo"/>
+    </select>
+
+    <insert id="insertFmgCategoryTwo" parameterType="FmgCategoryTwo" useGeneratedKeys="true" keyProperty="ctwoId">
+        insert into fmg_category_two
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="coneId != null">cone_id,</if>
+            <if test="ctwoName != null and ctwoName != ''">ctwo_name,</if>
+            <if test="ctwoNum != null">ctwo_num,</if>
+            <if test="ctwoCode != null">ctwo_code,</if>
+            <if test="ctwoInfo != null">ctwo_info,</if>
+            <if test="coneName != null">cone_name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="coneId != null">#{coneId},</if>
+            <if test="ctwoName != null and ctwoName != ''">#{ctwoName},</if>
+            <if test="ctwoNum != null">#{ctwoNum},</if>
+            <if test="ctwoCode != null">#{ctwoCode},</if>
+            <if test="ctwoInfo != null">#{ctwoInfo},</if>
+            <if test="coneName != null">#{coneName},</if>
+         </trim>
+    </insert>
+
+    <update id="updateFmgCategoryTwo" parameterType="FmgCategoryTwo">
+        update fmg_category_two
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="coneId != null">cone_id = #{coneId},</if>
+            <if test="ctwoName != null and ctwoName != ''">ctwo_name = #{ctwoName},</if>
+            <if test="ctwoNum != null">ctwo_num = #{ctwoNum},</if>
+            <if test="ctwoCode != null">ctwo_code = #{ctwoCode},</if>
+            <if test="ctwoInfo != null">ctwo_info = #{ctwoInfo},</if>
+            <if test="coneName != null">cone_name = #{coneName},</if>
+        </trim>
+        where ctwo_id = #{ctwoId}
+    </update>
+
+    <delete id="deleteFmgCategoryTwoByCtwoId" parameterType="Long">
+        delete from fmg_category_two where ctwo_id = #{ctwoId}
+    </delete>
+
+    <delete id="deleteFmgCategoryTwoByCtwoIds" parameterType="String">
+        delete from fmg_category_two where ctwo_id in 
+        <foreach item="ctwoId" collection="array" open="(" separator="," close=")">
+            #{ctwoId}
+        </foreach>
+    </delete>
+</mapper>

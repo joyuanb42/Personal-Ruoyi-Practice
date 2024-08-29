@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.GoodsInfoMapper">
+    
+    <resultMap type="GoodsInfo" id="GoodsInfoResult">
+        <result property="goodsId"    column="goods_id"    />
+        <result property="coneId"    column="cone_id"    />
+        <result property="ctwoId"    column="ctwo_id"    />
+        <result property="cthrId"    column="cthr_id"    />
+        <result property="brdId"    column="brd_id"    />
+        <result property="goodsName"    column="goods_name"    />
+        <result property="goodsCode"    column="goods_code"    />
+        <result property="goodsInTime"    column="goods_in_time"    />
+        <result property="goodsInfo"    column="goods_info"    />
+        <result property="modifiedTime"    column="modified_time"    />
+        <result property="coneName"    column="cone_name"    />
+        <result property="ctwoName"    column="ctwo_name"    />
+        <result property="cthrName"    column="cthr_name"    />
+        <result property="brandCnName"    column="brand_cn_name"    />
+        <result property="isUp"    column="is_up"    />
+    </resultMap>
+
+    <sql id="selectGoodsInfoVo">
+        select goods_id, cone_id, ctwo_id, cthr_id, brd_id, goods_name, goods_code, goods_in_time, goods_info, modified_time, cone_name, ctwo_name, cthr_name, brand_cn_name, is_up from fmg_goods_info
+    </sql>
+
+    <select id="selectGoodsInfoList" parameterType="GoodsInfo" resultMap="GoodsInfoResult">
+        select goods_id, gi.cone_id, gi.ctwo_id, gi.cthr_id, gi.brd_id, goods_name, goods_code, goods_in_time, goods_info, modified_time, is_up
+        , co.cone_name, ct.ctwo_name, cth.cthr_name, bi.brand_cn_name
+        from fmg_goods_info gi
+        left join fmg_category_one co on gi.cone_id = co.cone_id
+        left join fmg_category_two ct on gi.ctwo_id = ct.ctwo_id
+        left join fmg_category_three cth on gi.cthr_id = cth.cthr_id
+        left join fmg_brand_info bi on gi.brd_id = bi.brand_id
+        <where>  
+            <if test="goodsName != null  and goodsName != ''"> and goods_name like concat('%', #{goodsName}, '%')</if>
+            <if test="goodsCode != null  and goodsCode != ''"> and goods_code = #{goodsCode}</if>
+            <if test="isUp != null "> and is_up = #{isUp}</if>
+        </where>
+    </select>
+    
+    <select id="selectGoodsInfoByGoodsId" parameterType="Long" resultMap="GoodsInfoResult">
+        <include refid="selectGoodsInfoVo"/>
+        where goods_id = #{goodsId}
+    </select>
+
+    <insert id="insertGoodsInfo" parameterType="GoodsInfo" useGeneratedKeys="true" keyProperty="goodsId">
+        insert into fmg_goods_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="coneId != null">cone_id,</if>
+            <if test="ctwoId != null">ctwo_id,</if>
+            <if test="cthrId != null">cthr_id,</if>
+            <if test="brdId != null">brd_id,</if>
+            <if test="goodsName != null">goods_name,</if>
+            <if test="goodsCode != null">goods_code,</if>
+            <if test="goodsInTime != null">goods_in_time,</if>
+            <if test="goodsInfo != null">goods_info,</if>
+            <if test="modifiedTime != null">modified_time,</if>
+            <if test="coneName != null">cone_name,</if>
+            <if test="ctwoName != null">ctwo_name,</if>
+            <if test="cthrName != null">cthr_name,</if>
+            <if test="brandCnName != null">brand_cn_name,</if>
+            <if test="isUp != null">is_up,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="coneId != null">#{coneId},</if>
+            <if test="ctwoId != null">#{ctwoId},</if>
+            <if test="cthrId != null">#{cthrId},</if>
+            <if test="brdId != null">#{brdId},</if>
+            <if test="goodsName != null">#{goodsName},</if>
+            <if test="goodsCode != null">#{goodsCode},</if>
+            <if test="goodsInTime != null">#{goodsInTime},</if>
+            <if test="goodsInfo != null">#{goodsInfo},</if>
+            <if test="modifiedTime != null">#{modifiedTime},</if>
+            <if test="coneName != null">#{coneName},</if>
+            <if test="ctwoName != null">#{ctwoName},</if>
+            <if test="cthrName != null">#{cthrName},</if>
+            <if test="brandCnName != null">#{brandCnName},</if>
+            <if test="isUp != null">#{isUp},</if>
+         </trim>
+    </insert>
+
+    <update id="updateGoodsInfo" parameterType="GoodsInfo">
+        update fmg_goods_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="coneId != null">cone_id = #{coneId},</if>
+            <if test="ctwoId != null">ctwo_id = #{ctwoId},</if>
+            <if test="cthrId != null">cthr_id = #{cthrId},</if>
+            <if test="brdId != null">brd_id = #{brdId},</if>
+            <if test="goodsName != null">goods_name = #{goodsName},</if>
+            <if test="goodsCode != null">goods_code = #{goodsCode},</if>
+            <if test="goodsInTime != null">goods_in_time = #{goodsInTime},</if>
+            <if test="goodsInfo != null">goods_info = #{goodsInfo},</if>
+            <if test="modifiedTime != null">modified_time = #{modifiedTime},</if>
+            <if test="coneName != null">cone_name = #{coneName},</if>
+            <if test="ctwoName != null">ctwo_name = #{ctwoName},</if>
+            <if test="cthrName != null">cthr_name = #{cthrName},</if>
+            <if test="brandCnName != null">brand_cn_name = #{brandCnName},</if>
+            <if test="isUp != null">is_up = #{isUp},</if>
+        </trim>
+        where goods_id = #{goodsId}
+    </update>
+
+    <delete id="deleteGoodsInfoByGoodsId" parameterType="Long">
+        delete from fmg_goods_info where goods_id = #{goodsId}
+    </delete>
+
+    <delete id="deleteGoodsInfoByGoodsIds" parameterType="String">
+        delete from fmg_goods_info where goods_id in 
+        <foreach item="goodsId" collection="array" open="(" separator="," close=")">
+            #{goodsId}
+        </foreach>
+    </delete>
+</mapper>

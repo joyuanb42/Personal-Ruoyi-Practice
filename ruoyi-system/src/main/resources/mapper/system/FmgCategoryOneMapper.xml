@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.FmgCategoryOneMapper">
+    
+    <resultMap type="FmgCategoryOne" id="FmgCategoryOneResult">
+        <result property="coneId"    column="cone_id"    />
+        <result property="coneName"    column="cone_name"    />
+        <result property="coneNum"    column="cone_num"    />
+        <result property="coneCode"    column="cone_code"    />
+        <result property="coneInfo"    column="cone_info"    />
+        <result property="coneLogoPath"    column="cone_logo_path"    />
+        <result property="conePicPath"    column="cone_pic_path"    />
+    </resultMap>
+
+    <sql id="selectFmgCategoryOneVo">
+        select cone_id, cone_name, cone_num, cone_code, cone_info, cone_logo_path, cone_pic_path from fmg_category_one
+    </sql>
+
+    <select id="selectFmgCategoryOneList" parameterType="FmgCategoryOne" resultMap="FmgCategoryOneResult">
+        <include refid="selectFmgCategoryOneVo"/>
+        <where>  
+            <if test="coneName != null  and coneName != ''"> and cone_name like concat('%', #{coneName}, '%')</if>
+            <if test="coneCode != null  and coneCode != ''"> and cone_code = #{coneCode}</if>
+        </where>
+    </select>
+    
+    <select id="selectFmgCategoryOneByConeId" parameterType="Long" resultMap="FmgCategoryOneResult">
+        <include refid="selectFmgCategoryOneVo"/>
+        where cone_id = #{coneId}
+    </select>
+
+    <select id="selectListAll" resultMap="FmgCategoryOneResult">
+        <include refid="selectFmgCategoryOneVo"/>
+    </select>
+
+    <insert id="insertFmgCategoryOne" parameterType="FmgCategoryOne" useGeneratedKeys="true" keyProperty="coneId">
+        insert into fmg_category_one
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="coneName != null and coneName != ''">cone_name,</if>
+            <if test="coneNum != null">cone_num,</if>
+            <if test="coneCode != null">cone_code,</if>
+            <if test="coneInfo != null">cone_info,</if>
+            <if test="coneLogoPath != null">cone_logo_path,</if>
+            <if test="conePicPath != null">cone_pic_path,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="coneName != null and coneName != ''">#{coneName},</if>
+            <if test="coneNum != null">#{coneNum},</if>
+            <if test="coneCode != null">#{coneCode},</if>
+            <if test="coneInfo != null">#{coneInfo},</if>
+            <if test="coneLogoPath != null">#{coneLogoPath},</if>
+            <if test="conePicPath != null">#{conePicPath},</if>
+         </trim>
+    </insert>
+
+    <update id="updateFmgCategoryOne" parameterType="FmgCategoryOne">
+        update fmg_category_one
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="coneName != null and coneName != ''">cone_name = #{coneName},</if>
+            <if test="coneNum != null">cone_num = #{coneNum},</if>
+            <if test="coneCode != null">cone_code = #{coneCode},</if>
+            <if test="coneInfo != null">cone_info = #{coneInfo},</if>
+            <if test="coneLogoPath != null">cone_logo_path = #{coneLogoPath},</if>
+            <if test="conePicPath != null">cone_pic_path = #{conePicPath},</if>
+        </trim>
+        where cone_id = #{coneId}
+    </update>
+
+    <delete id="deleteFmgCategoryOneByConeId" parameterType="Long">
+        delete from fmg_category_one where cone_id = #{coneId}
+    </delete>
+
+    <delete id="deleteFmgCategoryOneByConeIds" parameterType="String">
+        delete from fmg_category_one where cone_id in 
+        <foreach item="coneId" collection="array" open="(" separator="," close=")">
+            #{coneId}
+        </foreach>
+    </delete>
+</mapper>

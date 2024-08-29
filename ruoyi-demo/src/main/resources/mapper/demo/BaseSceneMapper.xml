@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.demo.mapper.BaseSceneMapper">
+    
+    <resultMap type="BaseScene" id="BaseSceneResult">
+        <result property="sceneId"    column="scene_id"    />
+        <result property="sceneName"    column="scene_name"    />
+        <result property="sceneInfo"    column="scene_info"    />
+    </resultMap>
+
+    <sql id="selectBaseSceneVo">
+        select scene_id, scene_name, scene_info from fmg_base_scene
+    </sql>
+
+    <select id="selectBaseSceneList" parameterType="BaseScene" resultMap="BaseSceneResult">
+        <include refid="selectBaseSceneVo"/>
+        <where>  
+            <if test="sceneName != null  and sceneName != ''"> and scene_name like concat('%', #{sceneName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectBaseSceneBySceneId" parameterType="Long" resultMap="BaseSceneResult">
+        <include refid="selectBaseSceneVo"/>
+        where scene_id = #{sceneId}
+    </select>
+
+    <insert id="insertBaseScene" parameterType="BaseScene" useGeneratedKeys="true" keyProperty="sceneId">
+        insert into fmg_base_scene
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="sceneName != null and sceneName != ''">scene_name,</if>
+            <if test="sceneInfo != null">scene_info,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="sceneName != null and sceneName != ''">#{sceneName},</if>
+            <if test="sceneInfo != null">#{sceneInfo},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBaseScene" parameterType="BaseScene">
+        update fmg_base_scene
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="sceneName != null and sceneName != ''">scene_name = #{sceneName},</if>
+            <if test="sceneInfo != null">scene_info = #{sceneInfo},</if>
+        </trim>
+        where scene_id = #{sceneId}
+    </update>
+
+    <delete id="deleteBaseSceneBySceneId" parameterType="Long">
+        delete from fmg_base_scene where scene_id = #{sceneId}
+    </delete>
+
+    <delete id="deleteBaseSceneBySceneIds" parameterType="String">
+        delete from fmg_base_scene where scene_id in 
+        <foreach item="sceneId" collection="array" open="(" separator="," close=")">
+            #{sceneId}
+        </foreach>
+    </delete>
+</mapper>

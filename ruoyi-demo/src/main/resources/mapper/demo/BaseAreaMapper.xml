@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.demo.mapper.BaseAreaMapper">
+    
+    <resultMap type="BaseArea" id="BaseAreaResult">
+        <result property="areaId"    column="area_id"    />
+        <result property="areaParId"    column="area_par_id"    />
+        <result property="areaName"    column="area_name"    />
+        <result property="areaCode"    column="area_code"    />
+        <result property="areaLevel"    column="area_level"    />
+    </resultMap>
+
+    <sql id="selectBaseAreaVo">
+        select area_id, area_par_id, area_name, area_code, area_level from base_area
+    </sql>
+
+    <select id="selectBaseAreaList" parameterType="BaseArea" resultMap="BaseAreaResult">
+        <include refid="selectBaseAreaVo"/>
+        <where>  
+            <if test="areaName != null  and areaName != ''"> and area_name like concat('%', #{areaName}, '%')</if>
+            <if test="areaCode != null  and areaCode != ''"> and area_code = #{areaCode}</if>
+        </where>
+    </select>
+    
+    <select id="selectBaseAreaByAreaId" parameterType="Long" resultMap="BaseAreaResult">
+        <include refid="selectBaseAreaVo"/>
+        where area_id = #{areaId}
+    </select>
+
+    <select id="selectBaseAreaListAll" resultMap="BaseAreaResult">
+        <include refid="selectBaseAreaVo"/>
+    </select>
+
+    <insert id="insertBaseArea" parameterType="BaseArea" useGeneratedKeys="true" keyProperty="areaId">
+        insert into base_area
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="areaParId != null">area_par_id,</if>
+            <if test="areaName != null">area_name,</if>
+            <if test="areaCode != null">area_code,</if>
+            <if test="areaLevel != null">area_level,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="areaParId != null">#{areaParId},</if>
+            <if test="areaName != null">#{areaName},</if>
+            <if test="areaCode != null">#{areaCode},</if>
+            <if test="areaLevel != null">#{areaLevel},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBaseArea" parameterType="BaseArea">
+        update base_area
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="areaParId != null">area_par_id = #{areaParId},</if>
+            <if test="areaName != null">area_name = #{areaName},</if>
+            <if test="areaCode != null">area_code = #{areaCode},</if>
+            <if test="areaLevel != null">area_level = #{areaLevel},</if>
+        </trim>
+        where area_id = #{areaId}
+    </update>
+
+    <delete id="deleteBaseAreaByAreaId" parameterType="Long">
+        delete from base_area where area_id = #{areaId}
+    </delete>
+
+    <delete id="deleteBaseAreaByAreaIds" parameterType="String">
+        delete from base_area where area_id in 
+        <foreach item="areaId" collection="array" open="(" separator="," close=")">
+            #{areaId}
+        </foreach>
+    </delete>
+</mapper>

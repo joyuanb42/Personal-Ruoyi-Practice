@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.BrandInfoMapper">
+    
+    <resultMap type="BrandInfo" id="BrandInfoResult">
+        <result property="brandId"    column="brand_id"    />
+        <result property="brandCnName"    column="brand_cn_name"    />
+        <result property="brandEnName"    column="brand_en_name"    />
+        <result property="brandLogoPath"    column="brand_logo_path"    />
+        <result property="brandWebUrl"    column="brand_web_url"    />
+        <result property="brandNum"    column="brand_num"    />
+        <result property="brandInfo"    column="brand_info"    />
+        <result property="brandFoundedDate"    column="brand_founded_date"    />
+    </resultMap>
+
+    <sql id="selectBrandInfoVo">
+        select brand_id, brand_cn_name, brand_en_name, brand_logo_path, brand_web_url, brand_num, brand_info, brand_founded_date from fmg_brand_info
+    </sql>
+
+    <select id="selectBrandInfoList" parameterType="BrandInfo" resultMap="BrandInfoResult">
+        <include refid="selectBrandInfoVo"/>
+        <where>  
+            <if test="brandCnName != null  and brandCnName != ''"> and brand_cn_name like concat('%', #{brandCnName}, '%')</if>
+            <if test="brandEnName != null  and brandEnName != ''"> and brand_en_name = #{brandEnName}</if>
+            <if test="params.beginBrandFoundedDate != null and params.beginBrandFoundedDate != '' and params.endBrandFoundedDate != null and params.endBrandFoundedDate != ''"> and brand_founded_date between #{params.beginBrandFoundedDate} and #{params.endBrandFoundedDate}</if>
+        </where>
+    </select>
+    
+    <select id="selectBrandInfoByBrandId" parameterType="Long" resultMap="BrandInfoResult">
+        <include refid="selectBrandInfoVo"/>
+        where brand_id = #{brandId}
+    </select>
+
+    <select id="selectListAll" resultMap="BrandInfoResult">
+        <include refid="selectBrandInfoVo"/>
+    </select>
+
+    <insert id="insertBrandInfo" parameterType="BrandInfo" useGeneratedKeys="true" keyProperty="brandId">
+        insert into fmg_brand_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="brandCnName != null">brand_cn_name,</if>
+            <if test="brandEnName != null">brand_en_name,</if>
+            <if test="brandLogoPath != null">brand_logo_path,</if>
+            <if test="brandWebUrl != null">brand_web_url,</if>
+            <if test="brandNum != null">brand_num,</if>
+            <if test="brandInfo != null">brand_info,</if>
+            <if test="brandFoundedDate != null">brand_founded_date,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="brandCnName != null">#{brandCnName},</if>
+            <if test="brandEnName != null">#{brandEnName},</if>
+            <if test="brandLogoPath != null">#{brandLogoPath},</if>
+            <if test="brandWebUrl != null">#{brandWebUrl},</if>
+            <if test="brandNum != null">#{brandNum},</if>
+            <if test="brandInfo != null">#{brandInfo},</if>
+            <if test="brandFoundedDate != null">#{brandFoundedDate},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBrandInfo" parameterType="BrandInfo">
+        update fmg_brand_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="brandCnName != null">brand_cn_name = #{brandCnName},</if>
+            <if test="brandEnName != null">brand_en_name = #{brandEnName},</if>
+            <if test="brandLogoPath != null">brand_logo_path = #{brandLogoPath},</if>
+            <if test="brandWebUrl != null">brand_web_url = #{brandWebUrl},</if>
+            <if test="brandNum != null">brand_num = #{brandNum},</if>
+            <if test="brandInfo != null">brand_info = #{brandInfo},</if>
+            <if test="brandFoundedDate != null">brand_founded_date = #{brandFoundedDate},</if>
+        </trim>
+        where brand_id = #{brandId}
+    </update>
+
+    <delete id="deleteBrandInfoByBrandId" parameterType="Long">
+        delete from fmg_brand_info where brand_id = #{brandId}
+    </delete>
+
+    <delete id="deleteBrandInfoByBrandIds" parameterType="String">
+        delete from fmg_brand_info where brand_id in 
+        <foreach item="brandId" collection="array" open="(" separator="," close=")">
+            #{brandId}
+        </foreach>
+    </delete>
+</mapper>

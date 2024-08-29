@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.CompanyMapper">
+    
+    <resultMap type="Company" id="CompanyResult">
+        <result property="coId"    column="co_id"    />
+        <result property="coName"    column="co_name"    />
+        <result property="coCode"    column="co_code"    />
+    </resultMap>
+
+    <sql id="selectCompanyVo">
+        select co_id, co_name, co_code from ttz_company
+    </sql>
+
+    <select id="selectCompanyList" parameterType="Company" resultMap="CompanyResult">
+        <include refid="selectCompanyVo"/>
+        <where>  
+            <if test="coName != null  and coName != ''"> and co_name like concat('%', #{coName}, '%')</if>
+            <if test="coCode != null  and coCode != ''"> and co_code = #{coCode}</if>
+        </where>
+    </select>
+    
+    <select id="selectCompanyByCoId" parameterType="Long" resultMap="CompanyResult">
+        <include refid="selectCompanyVo"/>
+        where co_id = #{coId}
+    </select>
+
+    <select id="selectListAll" resultMap="CompanyResult">
+        <include refid="selectCompanyVo"/>
+    </select>
+
+    <insert id="insertCompany" parameterType="Company" useGeneratedKeys="true" keyProperty="coId">
+        insert into ttz_company
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="coName != null">co_name,</if>
+            <if test="coCode != null">co_code,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="coName != null">#{coName},</if>
+            <if test="coCode != null">#{coCode},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCompany" parameterType="Company">
+        update ttz_company
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="coName != null">co_name = #{coName},</if>
+            <if test="coCode != null">co_code = #{coCode},</if>
+        </trim>
+        where co_id = #{coId}
+    </update>
+
+    <delete id="deleteCompanyByCoId" parameterType="Long">
+        delete from ttz_company where co_id = #{coId}
+    </delete>
+
+    <delete id="deleteCompanyByCoIds" parameterType="String">
+        delete from ttz_company where co_id in 
+        <foreach item="coId" collection="array" open="(" separator="," close=")">
+            #{coId}
+        </foreach>
+    </delete>
+</mapper>

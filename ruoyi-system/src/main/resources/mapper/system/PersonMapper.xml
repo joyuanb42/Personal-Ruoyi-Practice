@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.PersonMapper">
+    
+    <resultMap type="Person" id="PersonResult">
+        <result property="persId"    column="pers_id"    />
+        <result property="coId"    column="co_id"    />
+        <result property="persName"    column="pers_name"    />
+        <result property="persSex"    column="pers_sex"    />
+        <result property="persInDate"    column="pers_in_date"    />
+        <result property="persSalary"    column="pers_salary"    />
+        <result property="persRemark"    column="pers_remark"    />
+        <result property="coName"    column="co_name"    />
+    </resultMap>
+
+    <sql id="selectPersonVo">
+        select pers_id, co_id, pers_name, pers_sex, pers_in_date, pers_salary, pers_remark from ttz_person
+    </sql>
+
+    <select id="selectPersonList" parameterType="Person" resultMap="PersonResult">
+        select pers_id, p.co_id, pers_name, pers_sex, pers_in_date, pers_salary, pers_remark
+        ,c.co_name
+        from ttz_person p left join ttz_company c on p.co_id = c.co_id
+        <where>  
+            <if test="persName != null  and persName != ''"> and pers_name like concat('%', #{persName}, '%')</if>
+            <if test="persSex != null "> and pers_sex = #{persSex}</if>
+        </where>
+    </select>
+    
+    <select id="selectPersonByPersId" parameterType="Long" resultMap="PersonResult">
+        <include refid="selectPersonVo"/>
+        where pers_id = #{persId}
+    </select>
+
+    <insert id="insertPerson" parameterType="Person" useGeneratedKeys="true" keyProperty="persId">
+        insert into ttz_person
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="coId != null">co_id,</if>
+            <if test="persName != null">pers_name,</if>
+            <if test="persSex != null">pers_sex,</if>
+            <if test="persInDate != null">pers_in_date,</if>
+            <if test="persSalary != null">pers_salary,</if>
+            <if test="persRemark != null">pers_remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="coId != null">#{coId},</if>
+            <if test="persName != null">#{persName},</if>
+            <if test="persSex != null">#{persSex},</if>
+            <if test="persInDate != null">#{persInDate},</if>
+            <if test="persSalary != null">#{persSalary},</if>
+            <if test="persRemark != null">#{persRemark},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePerson" parameterType="Person">
+        update ttz_person
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="coId != null">co_id = #{coId},</if>
+            <if test="persName != null">pers_name = #{persName},</if>
+            <if test="persSex != null">pers_sex = #{persSex},</if>
+            <if test="persInDate != null">pers_in_date = #{persInDate},</if>
+            <if test="persSalary != null">pers_salary = #{persSalary},</if>
+            <if test="persRemark != null">pers_remark = #{persRemark},</if>
+        </trim>
+        where pers_id = #{persId}
+    </update>
+
+    <delete id="deletePersonByPersId" parameterType="Long">
+        delete from ttz_person where pers_id = #{persId}
+    </delete>
+
+    <delete id="deletePersonByPersIds" parameterType="String">
+        delete from ttz_person where pers_id in 
+        <foreach item="persId" collection="array" open="(" separator="," close=")">
+            #{persId}
+        </foreach>
+    </delete>
+</mapper>

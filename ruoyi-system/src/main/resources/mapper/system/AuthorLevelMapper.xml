@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.AuthorLevelMapper">
+    
+    <resultMap type="AuthorLevel" id="AuthorLevelResult">
+        <result property="authorLevelId"    column="author_level_id"    />
+        <result property="authorLevelName"    column="author_level_name"    />
+        <result property="authorLevelCode"    column="author_level_code"    />
+    </resultMap>
+
+    <sql id="selectAuthorLevelVo">
+        select author_level_id, author_level_name, author_level_code from tth_author_level
+    </sql>
+
+    <select id="selectAuthorLevelList" parameterType="AuthorLevel" resultMap="AuthorLevelResult">
+        <include refid="selectAuthorLevelVo"/>
+        <where>  
+            <if test="authorLevelName != null  and authorLevelName != ''"> and author_level_name like concat('%', #{authorLevelName}, '%')</if>
+            <if test="authorLevelCode != null  and authorLevelCode != ''"> and author_level_code = #{authorLevelCode}</if>
+        </where>
+    </select>
+    
+    <select id="selectAuthorLevelByAuthorLevelId" parameterType="Long" resultMap="AuthorLevelResult">
+        <include refid="selectAuthorLevelVo"/>
+        where author_level_id = #{authorLevelId}
+    </select>
+
+        <select id="selectListAll" resultMap="AuthorLevelResult">
+            <include refid="selectAuthorLevelVo"/>
+        </select>
+
+    <insert id="insertAuthorLevel" parameterType="AuthorLevel" useGeneratedKeys="true" keyProperty="authorLevelId">
+        insert into tth_author_level
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="authorLevelName != null">author_level_name,</if>
+            <if test="authorLevelCode != null">author_level_code,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="authorLevelName != null">#{authorLevelName},</if>
+            <if test="authorLevelCode != null">#{authorLevelCode},</if>
+         </trim>
+    </insert>
+
+    <update id="updateAuthorLevel" parameterType="AuthorLevel">
+        update tth_author_level
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="authorLevelName != null">author_level_name = #{authorLevelName},</if>
+            <if test="authorLevelCode != null">author_level_code = #{authorLevelCode},</if>
+        </trim>
+        where author_level_id = #{authorLevelId}
+    </update>
+
+    <delete id="deleteAuthorLevelByAuthorLevelId" parameterType="Long">
+        delete from tth_author_level where author_level_id = #{authorLevelId}
+    </delete>
+
+    <delete id="deleteAuthorLevelByAuthorLevelIds" parameterType="String">
+        delete from tth_author_level where author_level_id in 
+        <foreach item="authorLevelId" collection="array" open="(" separator="," close=")">
+            #{authorLevelId}
+        </foreach>
+    </delete>
+</mapper>

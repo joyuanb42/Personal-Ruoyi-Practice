@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.CategoryThreeMapper">
+    
+    <resultMap type="CategoryThree" id="CategoryThreeResult">
+        <result property="cthrId"    column="cthr_id"    />
+        <result property="coneId"    column="cone_id"    />
+        <result property="ctwoId"    column="ctwo_id"    />
+        <result property="cthrName"    column="cthr_name"    />
+        <result property="cthrNum"    column="cthr_num"    />
+        <result property="cthrCode"    column="cthr_code"    />
+        <result property="cthrInfo"    column="cthr_info"    />
+        <result property="coneName"    column="cone_name"    />
+        <result property="ctwoName"    column="ctwo_name"    />
+    </resultMap>
+
+    <sql id="selectCategoryThreeVo">
+        select cthr_id, cone_id, ctwo_id, cthr_name, cthr_num, cthr_code, cthr_info, cone_name, ctwo_name from fmg_category_three
+    </sql>
+
+    <select id="selectCategoryThreeList" parameterType="CategoryThree" resultMap="CategoryThreeResult">
+        select cthr_id, ctr.cone_id, ctr.ctwo_id, cthr_name, cthr_num, cthr_code, cthr_info
+        , co.cone_name, ct.ctwo_name
+        from fmg_category_three ctr
+        left join fmg_category_one co on ctr.cone_id = co.cone_id
+        left join fmg_category_two ct on ctr.ctwo_id = ct.ctwo_id
+        <where>  
+            <if test="cthrName != null  and cthrName != ''"> and cthr_name like concat('%', #{cthrName}, '%')</if>
+            <if test="cthrCode != null  and cthrCode != ''"> and cthr_code = #{cthrCode}</if>
+            <if test="ctwoName != null  and ctwoName != ''"> and ctwo_name like concat('%', #{ctwoName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectCategoryThreeByCthrId" parameterType="Long" resultMap="CategoryThreeResult">
+        <include refid="selectCategoryThreeVo"/>
+        where cthr_id = #{cthrId}
+    </select>
+
+    <select id="selectListAll" resultMap="CategoryThreeResult">
+        <include refid="selectCategoryThreeVo"/>
+    </select>
+
+    <insert id="insertCategoryThree" parameterType="CategoryThree" useGeneratedKeys="true" keyProperty="cthrId">
+        insert into fmg_category_three
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="coneId != null">cone_id,</if>
+            <if test="ctwoId != null">ctwo_id,</if>
+            <if test="cthrName != null">cthr_name,</if>
+            <if test="cthrNum != null">cthr_num,</if>
+            <if test="cthrCode != null">cthr_code,</if>
+            <if test="cthrInfo != null">cthr_info,</if>
+            <if test="coneName != null">cone_name,</if>
+            <if test="ctwoName != null">ctwo_name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="coneId != null">#{coneId},</if>
+            <if test="ctwoId != null">#{ctwoId},</if>
+            <if test="cthrName != null">#{cthrName},</if>
+            <if test="cthrNum != null">#{cthrNum},</if>
+            <if test="cthrCode != null">#{cthrCode},</if>
+            <if test="cthrInfo != null">#{cthrInfo},</if>
+            <if test="coneName != null">#{coneName},</if>
+            <if test="ctwoName != null">#{ctwoName},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCategoryThree" parameterType="CategoryThree">
+        update fmg_category_three
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="coneId != null">cone_id = #{coneId},</if>
+            <if test="ctwoId != null">ctwo_id = #{ctwoId},</if>
+            <if test="cthrName != null">cthr_name = #{cthrName},</if>
+            <if test="cthrNum != null">cthr_num = #{cthrNum},</if>
+            <if test="cthrCode != null">cthr_code = #{cthrCode},</if>
+            <if test="cthrInfo != null">cthr_info = #{cthrInfo},</if>
+            <if test="coneName != null">cone_name = #{coneName},</if>
+            <if test="ctwoName != null">ctwo_name = #{ctwoName},</if>
+        </trim>
+        where cthr_id = #{cthrId}
+    </update>
+
+    <delete id="deleteCategoryThreeByCthrId" parameterType="Long">
+        delete from fmg_category_three where cthr_id = #{cthrId}
+    </delete>
+
+    <delete id="deleteCategoryThreeByCthrIds" parameterType="String">
+        delete from fmg_category_three where cthr_id in 
+        <foreach item="cthrId" collection="array" open="(" separator="," close=")">
+            #{cthrId}
+        </foreach>
+    </delete>
+</mapper>

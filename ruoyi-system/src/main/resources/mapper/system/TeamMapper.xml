@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.TeamMapper">
+    
+    <resultMap type="Team" id="TeamResult">
+        <result property="teamId"    column="team_id"    />
+        <result property="teamName"    column="team_name"    />
+    </resultMap>
+
+    <sql id="selectTeamVo">
+        select team_id, team_name from team
+    </sql>
+
+    <select id="selectTeamList" parameterType="Team" resultMap="TeamResult">
+        <include refid="selectTeamVo"/>
+        <where>  
+            <if test="teamName != null  and teamName != ''"> and team_name like concat('%', #{teamName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectTeamByTeamId" parameterType="Long" resultMap="TeamResult">
+        <include refid="selectTeamVo"/>
+        where team_id = #{teamId}
+    </select>
+
+    <insert id="insertTeam" parameterType="Team" useGeneratedKeys="true" keyProperty="teamId">
+        insert into team
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="teamName != null">team_name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="teamName != null">#{teamName},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTeam" parameterType="Team">
+        update team
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="teamName != null">team_name = #{teamName},</if>
+        </trim>
+        where team_id = #{teamId}
+    </update>
+
+    <delete id="deleteTeamByTeamId" parameterType="Long">
+        delete from team where team_id = #{teamId}
+    </delete>
+
+    <delete id="deleteTeamByTeamIds" parameterType="String">
+        delete from team where team_id in 
+        <foreach item="teamId" collection="array" open="(" separator="," close=")">
+            #{teamId}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.AuthorMapper">
+    
+    <resultMap type="Author" id="AuthorResult">
+        <result property="authorId"    column="author_id"    />
+        <result property="authorLevelId"    column="author_level_id"    />
+        <result property="authorName"    column="author_name"    />
+        <result property="authorSex"    column="author_sex"    />
+        <result property="authorBirth"    column="author_birth"    />
+        <result property="authorWorksCount"    column="author_works_count"    />
+        <result property="authorInfo"    column="author_info"    />
+        <result property="authorLevelName"    column="author_level_name"    />
+    </resultMap>
+
+    <sql id="selectAuthorVo">
+        select author_id, author_level_id, author_name, author_sex, author_birth, author_works_count, author_info from tth_author
+    </sql>
+
+    <select id="selectAuthorList" parameterType="Author" resultMap="AuthorResult">
+        select author_id, a.author_level_id, author_name, author_sex, author_birth, author_works_count, author_info
+        ,al.author_level_name
+        from tth_author a left join tth_author_level al on a.author_level_id = al.author_level_id
+        <where>  
+            <if test="authorName != null  and authorName != ''"> and author_name like concat('%', #{authorName}, '%')</if>
+            <if test="authorSex != null "> and author_sex = #{authorSex}</if>
+        </where>
+    </select>
+    
+    <select id="selectAuthorByAuthorId" parameterType="Long" resultMap="AuthorResult">
+        <include refid="selectAuthorVo"/>
+        where author_id = #{authorId}
+    </select>
+
+    <insert id="insertAuthor" parameterType="Author" useGeneratedKeys="true" keyProperty="authorId">
+        insert into tth_author
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="authorLevelId != null">author_level_id,</if>
+            <if test="authorName != null">author_name,</if>
+            <if test="authorSex != null">author_sex,</if>
+            <if test="authorBirth != null">author_birth,</if>
+            <if test="authorWorksCount != null">author_works_count,</if>
+            <if test="authorInfo != null">author_info,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="authorLevelId != null">#{authorLevelId},</if>
+            <if test="authorName != null">#{authorName},</if>
+            <if test="authorSex != null">#{authorSex},</if>
+            <if test="authorBirth != null">#{authorBirth},</if>
+            <if test="authorWorksCount != null">#{authorWorksCount},</if>
+            <if test="authorInfo != null">#{authorInfo},</if>
+         </trim>
+    </insert>
+
+    <update id="updateAuthor" parameterType="Author">
+        update tth_author
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="authorLevelId != null">author_level_id = #{authorLevelId},</if>
+            <if test="authorName != null">author_name = #{authorName},</if>
+            <if test="authorSex != null">author_sex = #{authorSex},</if>
+            <if test="authorBirth != null">author_birth = #{authorBirth},</if>
+            <if test="authorWorksCount != null">author_works_count = #{authorWorksCount},</if>
+            <if test="authorInfo != null">author_info = #{authorInfo},</if>
+        </trim>
+        where author_id = #{authorId}
+    </update>
+
+    <delete id="deleteAuthorByAuthorId" parameterType="Long">
+        delete from tth_author where author_id = #{authorId}
+    </delete>
+
+    <delete id="deleteAuthorByAuthorIds" parameterType="String">
+        delete from tth_author where author_id in 
+        <foreach item="authorId" collection="array" open="(" separator="," close=")">
+            #{authorId}
+        </foreach>
+    </delete>
+</mapper>
